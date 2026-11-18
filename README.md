@@ -110,6 +110,16 @@ One rule matters more than it looks: **a changed file that matches no rule runs 
 4. Next time you fix a bug, run `redline prove` before you merge.
 5. Re-run `redline score` after two weeks. Keep what moved the numbers and revert what didn't.
 
+## What one night with it found
+
+These are from the first rollout, across a small SaaS, a client monorepo, two browser extensions and two Android apps, with agents doing most of the work:
+
+- **The slow part wasn't the tests.** One app's suite ran in about 4 minutes, but PRs waited a median 27.6 minutes for a result. Every branch ran CI twice (once for the push and once for the PR) on a single runner. Fixing the triggers and adding a second runner did more than any test change.
+- **"No flakes" wasn't true.** `score` found runs that were red on their first attempt and passed on a rerun. The team's own summary said there were none.
+- **Red after merge was mostly avoidable.** A client repo ran no tests on PRs. Of its 9 red staging runs, 7 were bugs or outdated tests that a pre-merge check would have caught.
+- **`prove` caught a security fix as a side effect.** Listing money paths turned up a flow with no test: an endpoint returning any buyer's checkout session to any signed-in user. The fix came with a test, and `prove` showed the test fails without the fix.
+- **More workers can be slower.** 32 parallel test workers lost to 8, because start-up imports dominated. Time the steps first.
+
 ## What redline is not
 
 It is not a test runner, a coverage tool or a flaky-test detector with a database. It is a short list of ideas, made checkable. If your team already does all seven, you don't need it, except perhaps `score`, to show you still do.
