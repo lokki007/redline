@@ -1,0 +1,51 @@
+# Three lanes on GitHub Actions. Copy to .github/workflows/tests.yml and adjust the commands.
+name: tests
+
+on:
+  pull_request:          # fast check: one run per change (no second run for the push)
+  push:
+    branches: [main]     # merge check: everything
+  schedule:
+    - cron: '0 3 * * *'  # nightly: the slow and the expensive
+
+concurrency:
+  group: tests-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  fast:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx redline check
+      - run: npx redline pick --base origin/${{ github.base_ref }} --run
+
+  merge:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm test
+
+  nightly:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run test:slow --if-present
+      - run: npx redline score --limit 100 >> "$GITHUB_STEP_SUMMARY"
+        env: { GH_TOKEN: '${{ github.token }}' }

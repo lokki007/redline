@@ -1,0 +1,12 @@
+{
+  "name": "redline-tests",
+  "version": "0.1.0",
+  "description": "Tests you can trust, fast. Seven ideas and four small commands.",
+  "type": "module",
+  "bin": { "redline": "bin/redline.mjs" },
+  "files": ["bin", "src", "examples", "README.md", "LICENSE"],
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "engines": { "node": ">=18" },
+  "keywords": ["testing", "ci", "flaky-tests", "test-selection", "quality"],
+  "license": "MIT"
+}

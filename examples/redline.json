@@ -1,0 +1,17 @@
+{
+  "full": "npm test",
+  "always": ["node --test tests/money.test.js"],
+  "rules": [
+    { "when": ["src/sync/**"], "run": ["node --test tests/sync.test.js"] },
+    { "when": ["src/ui/**", "*.css"], "run": ["npm run test:ui"] },
+    { "when": ["*.md", "docs/**", "LICENSE"], "run": [] }
+  ],
+  "flows": [
+    { "name": "Lifetime key unlocks sync", "test": "tests/money.test.js" },
+    { "name": "Refund locks sync again", "test": "tests/money.test.js" },
+    { "name": "Sync keeps both edits when two devices change one item", "test": "tests/sync.test.js" },
+    { "name": "Old app version reads data written by the new one", "test": null }
+  ],
+  "quarantine": [],
+  "quarantineCap": 5
+}

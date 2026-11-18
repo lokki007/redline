@@ -1,0 +1,14 @@
+{
+  "full": "npm test",
+  "always": ["node --test test/redline.test.mjs"],
+  "rules": [
+    { "when": ["*.md", "examples/**", "LICENSE"], "run": [] }
+  ],
+  "flows": [
+    { "name": "An unknown changed file runs the full suite", "test": "test/redline.test.mjs" },
+    { "name": "A rerun that passed still counts as a first red", "test": "test/redline.test.mjs" },
+    { "name": "Money-path tests cannot be quarantined", "test": "test/redline.test.mjs" }
+  ],
+  "quarantine": [],
+  "quarantineCap": 5
+}
