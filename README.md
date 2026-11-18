@@ -5,7 +5,7 @@
 Writing tests used to be the hard part. Now an agent writes fifty before lunch. The hard parts are different: knowing whether those tests catch anything, getting a verdict before you've moved on, and not getting used to a red build. redline is a way of thinking about those three problems, with just enough tooling to keep you honest.
 
 ```
-npm i -D redline-tests        # or run once: npx -p redline-tests redline score
+npm i -D github:lokki007/redline   # npm package (redline-tests) coming; this works today
 
 npx redline score              # how red, and how slow, is CI really?
 npx redline pick --run         # run what this change needs, plus what must always run
